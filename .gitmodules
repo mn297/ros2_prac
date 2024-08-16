@@ -1,6 +1,12 @@
 [submodule "micro-ROS-Agent"]
 	path = micro-ROS-Agent
-	url = https://github.com/micro-ROS/micro-ROS-Agent.git
-[submodule "turtlebot4_simulator"]
-	path = turtlebot4_simulator
+	url = https://github.com/micro-ROS/micro-ROS-Agent.git	
+[submodule "micro_ros_stm32cubemx_utils"]
+	path = micro_ros_stm32cubemx_utils
+	url = https://github.com/micro-ROS/micro_ros_stm32cubemx_utils.git
+[submodule "turtlebot4_ws/src/turtlebot4_simulator"]
+	path = turtlebot4_ws/src/turtlebot4_simulator
 	url = https://github.com/turtlebot/turtlebot4_simulator.git
+[submodule "rcl"]
+	path = rcl
+	url = https://github.com/ros2/rcl.git
