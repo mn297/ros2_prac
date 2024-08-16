@@ -84,12 +84,14 @@
         <origin xyz="0 0 0.1" rpy="0 0 0" />
     </joint>
 
+    <!-- Gazebo IMU Plugin -->
     <gazebo>
         <plugin name="gazebo_ros_imu" filename="libgazebo_ros_imu.so">
             <ros>
                 <namespace>/</namespace>
                 <remapping>
-                    <imu/ data>/imu/data</imu/data>
+                    <from>imu/data</from>
+                    <to>/imu/data</to>
                 </remapping>
             </ros>
             <imu>

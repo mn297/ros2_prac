@@ -19,7 +19,7 @@ find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch)
-install(DIRECTORY urdf/ DESTINATION share/${PROJECT_NAME}/urdf)
+install(DIRECTORY model/ DESTINATION share/${PROJECT_NAME}/model)
 
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
