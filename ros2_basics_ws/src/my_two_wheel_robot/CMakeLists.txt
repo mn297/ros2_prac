@@ -14,7 +14,7 @@ find_package(ament_cmake REQUIRED)
 find_package(xacro REQUIRED)
 find_package(robot_state_publisher REQUIRED)
 find_package(rviz2 REQUIRED)
-find_package(gazebo_ros REQUIRED)
+# find_package(gazebo_ros REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
