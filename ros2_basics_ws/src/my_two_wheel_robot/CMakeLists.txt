@@ -18,8 +18,14 @@ find_package(rviz2 REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
-install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch)
-install(DIRECTORY model/ DESTINATION share/${PROJECT_NAME}/model)
+# install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch)
+# install(DIRECTORY model/ DESTINATION share/${PROJECT_NAME}/model)
+
+# No need to explicitly write the destination folder name when doing multiple directories
+install(
+  DIRECTORY rviz launch model model/meshes
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
