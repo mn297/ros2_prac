@@ -15,6 +15,7 @@ import xacro
 
 
 def generate_launch_description():
+    use_sim_time = LaunchConfiguration("use_sim_time")
     pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
 
     world_file_path = os.path.join(
@@ -34,14 +35,16 @@ def generate_launch_description():
     urdf_file_path = os.path.join(
         get_package_share_directory("my_two_wheel_robot"),
         "model",
-        "two_wheel_robot.urdf",
+        # "two_wheel_robot.urdf",
+        "rover.urdf",
     )
 
     # method 1
     # robot_description_config = xacro.process_file(xacro_file_path)
     # robot_desc = robot_description_config.toxml()
     # method 2
-    robot_desc = ParameterValue(Command(["xacro ", xacro_file_path]), value_type=str)
+    # robot_desc = ParameterValue(Command(["xacro ", xacro_file_path]), value_type=str)
+    robot_desc = ParameterValue(Command(["xacro ", urdf_file_path]), value_type=str)
 
     # Xacro command to generate URDF
     xacro_command = [
@@ -89,7 +92,7 @@ def generate_launch_description():
     # )
 
     # Publish robot state
-    # robot_state_publisher_node = Node(
+    # start_robot_state_publisher_cmd = Node(
     #     package="robot_state_publisher",
     #     executable="robot_state_publisher",
     #     output="screen",
@@ -119,6 +122,13 @@ def generate_launch_description():
     # gz_sim = ExecuteProcess(
     #     cmd=["ign", "gazebo", world_file_path, "-v", "4"], output="screen"
     # )
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    declare_use_sim_time_cmd = DeclareLaunchArgument(
+        "use_sim_time",
+        default_value="true",
+        description="Use simulation (Gazebo) clock if true",
+    )
+
     world = LaunchConfiguration("world")
     declare_world_cmd = DeclareLaunchArgument(
         "world", default_value="maze.sdf", description="World file to use in Gazebo"
@@ -177,13 +187,29 @@ def generate_launch_description():
     #     output="screen",
     # )
 
+    gz_ros2_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=[
+            "/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist",
+            "/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock",
+            "/odometry/wheels@nav_msgs/msg/Odometry@ignition.msgs.Odometry",
+            "/tf@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V",
+            "/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model",
+            "/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan",
+            "/imu/data@sensor_msgs/msg/Imu@gz.msgs.IMU",
+        ],
+    )
+
     # Start the robot_state_publisher
-    robot_state_publisher_node = Node(
+    params = {"use_sim_time": use_sim_time, "robot_description": robot_desc}
+    start_robot_state_publisher_cmd = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
         output="both",
-        parameters=[{"robot_description": robot_desc}],
+        parameters=[params],
+        arguments=[],
     )
 
     # Start RViz
@@ -197,7 +223,7 @@ def generate_launch_description():
             os.path.join(
                 get_package_share_directory("my_two_wheel_robot"),
                 "rviz",
-                "robot.rviz",
+                "urdf.rviz",
             ),
         ],
     )
@@ -205,17 +231,19 @@ def generate_launch_description():
     # Create the launch description and populate
     ld = LaunchDescription()
 
+    ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_world_cmd)
     # ld.add_action(world_sdf_xacro)
 
     # Gazebo
     ld.add_action(gz_sim)
     ld.add_action(gz_spawn_entity)
+    ld.add_action(gz_ros2_bridge)
 
     # Robot state publisher
-    ld.add_action(robot_state_publisher_node)
+    ld.add_action(start_robot_state_publisher_cmd)
 
     # RViz
-    ld.add_action(rviz_cmd)
+    # ld.add_action(rviz_cmd)
 
     return ld
