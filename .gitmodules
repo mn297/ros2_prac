@@ -10,3 +10,21 @@
 [submodule "rcl"]
 	path = rcl
 	url = https://github.com/ros2/rcl.git
+[submodule "box_car"]
+	path = box_car
+	url = https://bitbucket.org/theconstructcore/box_car/
+[submodule "librealsense"]
+	path = librealsense
+	url = https://github.com/IntelRealSense/librealsense.git
+[submodule "navigation2"]
+	path = navigation2
+	url = https://github.com/ros-navigation/navigation2.git
+[submodule "realsense-ros"]
+	path = realsense-ros
+	url = https://github.com/IntelRealSense/realsense-ros.git
+[submodule "rover_example_ws/src"]
+	path = rover_example_ws/src
+	url = https://github.com/RoverRobotics/roverrobotics_ros2.git
+[submodule "ros_gz_project_template"]
+	path = ros_gz_project_template
+	url = https://github.com/gazebosim/ros_gz_project_template.git
