@@ -22,7 +22,7 @@
 				<origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 				<geometry>
 					<mesh
-						filename="package://my_two_wheel_robot/model/meshes/full_wheel_assembly_fixed.dae" />
+						filename="file://$(find my_two_wheel_robot)/model/meshes/full_wheel_assembly_fixed.dae" />
 				</geometry>
 			</visual>
 			<collision>

@@ -16,7 +16,7 @@
             <visual name="kinect_visual">
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="package://my_two_wheel_robot/model/meshes/depth_camera.dae"
+                    <mesh filename="file://$(find my_two_wheel_robot)/model/meshes/depth_camera.dae"
                         scale="1.0 1.0 1.0" />
                 </geometry>
             </visual>

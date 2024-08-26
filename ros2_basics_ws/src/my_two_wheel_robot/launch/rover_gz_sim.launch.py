@@ -43,8 +43,8 @@ def generate_launch_description():
     # robot_description_config = xacro.process_file(xacro_file_path)
     # robot_desc = robot_description_config.toxml()
     # method 2
-    # robot_desc = ParameterValue(Command(["xacro ", xacro_file_path]), value_type=str)
-    robot_desc = ParameterValue(Command(["xacro ", urdf_file_path]), value_type=str)
+    robot_desc = ParameterValue(Command(["xacro ", xacro_file_path]), value_type=str)
+    # robot_desc = ParameterValue(Command(["xacro ", urdf_file_path]), value_type=str)
 
     # Xacro command to generate URDF
     xacro_command = [
