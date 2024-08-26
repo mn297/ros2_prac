@@ -21,6 +21,7 @@ def generate_launch_description():
     world_file_path = os.path.join(
         get_package_share_directory("my_two_wheel_robot"),
         "model",
+        "worlds",
         "world.sdf",
     )
 
@@ -39,10 +40,10 @@ def generate_launch_description():
         "rover.urdf",
     )
 
-    # method 1
+    # Method 1
     # robot_description_config = xacro.process_file(xacro_file_path)
     # robot_desc = robot_description_config.toxml()
-    # method 2
+    # Method 2
     robot_desc = ParameterValue(Command(["xacro ", xacro_file_path]), value_type=str)
     # robot_desc = ParameterValue(Command(["xacro ", urdf_file_path]), value_type=str)
 
@@ -56,54 +57,6 @@ def generate_launch_description():
         "-o",
         urdf_file_path,
     ]
-
-    # # Convert Xacro to URDF
-    # ExecuteProcess(cmd=xacro_command, output="screen"),
-    # # Include the Gazebo launch file
-    # IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         [
-    #             os.path.join(
-    #                 get_package_share_directory("gazebo_ros"),
-    #                 "launch",
-    #                 "gazebo.launch.py",
-    #             )
-    #         ]
-    #     ),
-    # ),
-
-    # Start Gazebo with plugin providing the robot spawning service
-    # VERSION 1 (obsolete)
-    # gazebo_cmd = Node(
-    #     package="gazebo_ros",
-    #     executable="spawn_entity.py",
-    #     arguments=["-entity", "two_wheel_robot", "-file", urdf_file],
-    #     output="screen",
-    # )
-
-    # VERSION 2
-    # world_sdf = tempfile.mktemp(prefix="nav2_", suffix=".sdf")
-    # world_sdf_xacro = ExecuteProcess(
-    #     cmd=["xacro", "-o", world_sdf, ["headless:=", "False"], world]
-    # )
-    # start_gazebo_cmd = ExecuteProcess(
-    #     cmd=["gz", "sim", "-r", "-s", world_sdf],
-    #     output="screen",
-    # )
-
-    # Publish robot state
-    # start_robot_state_publisher_cmd = Node(
-    #     package="robot_state_publisher",
-    #     executable="robot_state_publisher",
-    #     output="screen",
-    #     # parameters=[{"robot_description": open(urdf_file).read()}],
-    #     parameters=[
-    #         {
-    #             "use_sim_time": True,
-    #             "robot_description": Command(["xacro", " ", xacro_file_path]),
-    #         }
-    #     ],
-    # )
 
     temp_urdf_file = tempfile.NamedTemporaryFile(delete=False, mode="w", suffix=".urdf")
     if os.path.exists(temp_urdf_file.name):
@@ -119,9 +72,6 @@ def generate_launch_description():
     )
 
     # Start Ignition Gazebo with an empty world
-    # gz_sim = ExecuteProcess(
-    #     cmd=["ign", "gazebo", world_file_path, "-v", "4"], output="screen"
-    # )
     use_sim_time = LaunchConfiguration("use_sim_time")
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         "use_sim_time",
@@ -129,14 +79,14 @@ def generate_launch_description():
         description="Use simulation (Gazebo) clock if true",
     )
 
+    # Gazebo simulation
     world = LaunchConfiguration("world")
     declare_world_cmd = DeclareLaunchArgument(
         "world", default_value="maze.sdf", description="World file to use in Gazebo"
     )
     gz_world_arg = PathJoinSubstitution(
-        [get_package_share_directory("my_two_wheel_robot"), "model", world]
+        [get_package_share_directory("my_two_wheel_robot"), "model", "worlds", world]
     )
-
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
@@ -144,7 +94,7 @@ def generate_launch_description():
         launch_arguments={"gz_args": gz_world_arg}.items(),
     )
 
-    # Spawn the URDF model into Gazebo
+    # Spawn the URDF robot model into Gazebo
     gz_spawn_entity = Node(
         package="ros_gz_sim",
         executable="create",
@@ -163,29 +113,6 @@ def generate_launch_description():
             "0",
         ],
     )
-    # gz_spawn_entity = ExecuteProcess(
-    #     cmd=[
-    #         "ros2",
-    #         "run",
-    #         # "ros_ign_gazebo",
-    #         "ros_gz_sim",
-    #         "create",
-    #         "-name",
-    #         "my_two_wheel_robot",
-    #         # "-file",
-    #         # urdf_file_path,
-    #         "-topic",
-    #         "/robot_description",
-    #         # Make the base on the floor
-    #         "-x",
-    #         "0",
-    #         "-y",
-    #         "0",
-    #         "-z",
-    #         "0",
-    #     ],
-    #     output="screen",
-    # )
 
     gz_ros2_bridge = Node(
         package="ros_gz_bridge",
@@ -233,7 +160,6 @@ def generate_launch_description():
 
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_world_cmd)
-    # ld.add_action(world_sdf_xacro)
 
     # Gazebo
     ld.add_action(gz_sim)
